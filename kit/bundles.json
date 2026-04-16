@@ -22,7 +22,8 @@
         "skills/knowledge-audit",
         "skills/security-maintenance",
         "skills/atlas-health-check",
-        "cron/schedule"
+        "cron/schedule",
+        "dashboard/app"
       ]
     },
     "skills-only": {
@@ -52,7 +53,8 @@
       "description": "Just the executive dashboard and required databases.",
       "components": [
         "db/tasks",
-        "db/auth"
+        "db/auth",
+        "dashboard/app"
       ]
     },
     "minimal": {

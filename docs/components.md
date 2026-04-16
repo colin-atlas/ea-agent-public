@@ -2,7 +2,7 @@
 
 This document describes every component in the Atlas EA kit. Components are the installable units — each has a `manifest.json`, content files, and optional dependencies.
 
-**19 components total** across 7 types: identity, brain, memory, db, scripts, skills, cron.
+**20 components total** across 8 types: identity, brain, memory, db, scripts, skills, cron, dashboard.
 
 ---
 
@@ -174,11 +174,22 @@ Central cron manifest (`cron-manifest.json`) defining schedules for all skills. 
 
 ---
 
+## Dashboard
+
+### dashboard/app
+Executive dashboard web application: task board with Sacred Six, brain vault browser/editor, meeting debriefs, SOD/EOD/weekly reports, calendar view, skill status, system health. Built with Next.js 16, React 19, Tailwind CSS 4.
+
+**Bundles:** Full EA, Dashboard Only
+**Depends on:** identity/workspace, db/tasks, db/auth
+**Setup:** After the bootstrap skill installs, run `bash dashboard-setup.local.sh` in your terminal. Requires Node.js 22+, sqlite3, sudo access for systemd.
+
+---
+
 ## Bundle summary
 
 | Bundle | Components included |
 |---|---|
-| Full EA | All 19 components |
+| Full EA | All 20 components |
 | Skills Only | identity/workspace, brain/knowledge-vault, memory/scaffold, db/tasks, scripts/google-api, scripts/fathom-api, scripts/tasks-cli, scripts/google-reauth, all 9 skills, cron/schedule |
-| Dashboard Only | db/tasks, db/auth |
+| Dashboard Only | db/tasks, db/auth, dashboard/app |
 | Minimal | identity/workspace |

@@ -19,6 +19,8 @@ These tokens are required by `identity/workspace` and `cron/schedule` — presen
 | `EXECUTIVE_TIMEZONE` | IANA timezone string | America/Denver |
 | `EXECUTIVE_CHANNEL_ID` | Your Slack/Discord user ID | U01ABCDEF |
 | `PRIMARY_CHANNEL` | Main communication channel ID | C01ABCDEF |
+| `WORKSPACE_PATH` | Absolute path to agent workspace | /home/user/.openclaw/workspace |
+| `DASHBOARD_PORT` | Port for the dashboard service | 3000 |
 
 ---
 

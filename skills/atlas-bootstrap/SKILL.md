@@ -141,6 +141,35 @@ The script writes files into `$WORKSPACE`, updates `$STATE_FILE` with installed 
 
 If the script exits non-zero, capture stderr and report it verbatim to the user. Do NOT attempt to clean up partial state — the install script stages per-component so partial failures are contained.
 
+## Dashboard (if selected)
+
+If the user selected a bundle that includes `dashboard/app`, or explicitly chose the dashboard:
+
+1. The install script already rendered `dashboard-setup.local.sh` at the kit root with the user's config values.
+
+2. Ask the user two additional questions (these are dashboard-specific, not part of the standard interview):
+   - `WORKSPACE_PATH` — "What's the absolute path to your agent's workspace?" (typically `~/.openclaw/workspace`)
+   - `DASHBOARD_PORT` — "What port should the dashboard run on?" (suggest 3000 or 18801)
+
+   Update the state file with these answers.
+
+3. Tell the user:
+   > "The dashboard needs to be set up from your terminal (not through me) because it requires sudo for systemd and you'll enter your login credentials directly. Run:
+   >
+   > ```
+   > bash $KIT_DIR/dashboard-setup.local.sh
+   > ```
+   >
+   > The script will:
+   > - Install npm dependencies and build the dashboard
+   > - Ask for your login email and password
+   > - Create a systemd service
+   > - Optionally configure Caddy for HTTPS
+   >
+   > After it finishes, your dashboard will be running."
+
+Do NOT run the setup script yourself. The user runs it in their terminal.
+
 ## Report
 
 After a successful install, tell the user:
