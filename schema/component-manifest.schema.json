@@ -9,12 +9,12 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^(identity|skills|db|scripts|dashboard)/[a-z0-9][a-z0-9-]*$",
+      "pattern": "^(identity|skills|db|scripts|dashboard|brain|memory|cron)/[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique component ID. Format: '<type>/<slug>'."
     },
     "type": {
       "type": "string",
-      "enum": ["identity", "skills", "db", "scripts", "dashboard"]
+      "enum": ["identity", "skills", "db", "scripts", "dashboard", "brain", "memory", "cron"]
     },
     "version": {
       "type": "string",
@@ -43,7 +43,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "pattern": "^(identity|skills|db|scripts|dashboard)/[a-z0-9][a-z0-9-]*$"
+            "pattern": "^(identity|skills|db|scripts|dashboard|brain|memory|cron)/[a-z0-9][a-z0-9-]*$"
           },
           "uniqueItems": true
         },
