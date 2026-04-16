@@ -173,3 +173,21 @@ def install_component(
         ) from exc
     finally:
         shutil.rmtree(staging, ignore_errors=True)
+
+
+def check_dependents(
+    component_id: str,
+    installed: set[str],
+    kit: dict[str, dict[str, Any]],
+) -> list[str]:
+    """Return installed component IDs that list component_id in their requires.components."""
+    dependents: list[str] = []
+    for cid in installed:
+        if cid == component_id:
+            continue
+        if cid not in kit:
+            continue
+        deps = kit[cid].get("requires", {}).get("components", [])
+        if component_id in deps:
+            dependents.append(cid)
+    return sorted(dependents)

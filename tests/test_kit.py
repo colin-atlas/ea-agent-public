@@ -379,6 +379,33 @@ class InstallCliTest(unittest.TestCase):
         self.assertIn("GREETING", result.stderr)
 
 
+class CheckDependentsTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        self.kit_root = _make_fake_kit(self.tmp)
+        self.kit = kitlib.load_kit(self.kit_root)
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_identity_has_dependent(self):
+        installed = {"identity/bootstrap", "skills/demo"}
+        result = kitlib.check_dependents("identity/bootstrap", installed, self.kit)
+        self.assertIn("skills/demo", result)
+
+    def test_skill_has_no_dependents(self):
+        installed = {"identity/bootstrap", "skills/demo"}
+        result = kitlib.check_dependents("skills/demo", installed, self.kit)
+        self.assertEqual(result, [])
+
+    def test_uninstalled_dependent_not_returned(self):
+        installed = {"identity/bootstrap"}
+        result = kitlib.check_dependents("identity/bootstrap", installed, self.kit)
+        self.assertEqual(result, [])
+
+
 class AtomicSaveTest(unittest.TestCase):
     def setUp(self):
         import tempfile
