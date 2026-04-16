@@ -72,3 +72,21 @@ def required_placeholders(
     for cid in components:
         tokens.update(kit[cid].get("requires", {}).get("placeholders", []))
     return sorted(tokens)
+
+
+def substitute_placeholders(text: str, answers: dict[str, str]) -> str:
+    def repl(m: re.Match[str]) -> str:
+        token = m.group(1)
+        if token not in answers:
+            raise KeyError(f"no answer for placeholder [{token}]")
+        return answers[token]
+
+    return PLACEHOLDER_RE.sub(repl, text)
+
+
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()

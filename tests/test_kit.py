@@ -137,5 +137,47 @@ class ResolveDepsTest(unittest.TestCase):
         self.assertEqual(result, ["GREETING", "NAME"])
 
 
+class SubstituteTest(unittest.TestCase):
+    def test_basic_substitution(self):
+        result = kitlib.substitute_placeholders(
+            "Hello [NAME], welcome to [COMPANY]",
+            {"NAME": "Jane", "COMPANY": "Example Co"},
+        )
+        self.assertEqual(result, "Hello Jane, welcome to Example Co")
+
+    def test_repeated_token(self):
+        result = kitlib.substitute_placeholders(
+            "[A] and [A] again",
+            {"A": "x"},
+        )
+        self.assertEqual(result, "x and x again")
+
+    def test_missing_answer_raises(self):
+        with self.assertRaises(KeyError):
+            kitlib.substitute_placeholders("Hi [NAME]", {})
+
+    def test_lowercase_brackets_not_substituted(self):
+        result = kitlib.substitute_placeholders(
+            "Array access: items[i] and [REAL]", {"REAL": "ok"}
+        )
+        self.assertEqual(result, "Array access: items[i] and ok")
+
+
+class Sha256Test(unittest.TestCase):
+    def test_sha256_of_known_content(self):
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            f = tmp / "a.txt"
+            f.write_bytes(b"hello\n")
+            self.assertEqual(
+                kitlib.sha256_file(f),
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+            )
+        finally:
+            import shutil
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == "__main__":
     unittest.main()
