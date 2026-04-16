@@ -116,3 +116,58 @@ def save_state(workspace: Path, state: dict[str, Any]) -> None:
     path = Path(workspace) / STATE_FILENAME
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state, indent=2, sort_keys=False) + "\n")
+
+
+def install_component(
+    component_id: str,
+    kit_root: Path,
+    workspace: Path,
+    answers: dict[str, str],
+) -> list[dict[str, str]]:
+    kit_root = Path(kit_root)
+    workspace = Path(workspace)
+    component_dir = kit_root / component_id
+    manifest = load_manifest(component_dir)
+
+    staging = Path(tempfile.mkdtemp(prefix="atlas-install-"))
+    try:
+        written: list[dict[str, str]] = []
+        for entry in manifest["files"]:
+            src = component_dir / entry["src"]
+            dest_rel = entry["dest"]
+            staged = staging / dest_rel
+            staged.parent.mkdir(parents=True, exist_ok=True)
+
+            if manifest["type"] == "db":
+                sql = src.read_text()
+                con = sqlite3.connect(staged)
+                try:
+                    con.executescript(sql)
+                    con.commit()
+                finally:
+                    con.close()
+                written.append({"path": dest_rel, "sha256": "initialized"})
+            elif entry.get("template", False):
+                text = substitute_placeholders(src.read_text(), answers)
+                staged.write_text(text)
+                written.append(
+                    {"path": dest_rel, "sha256": sha256_file(staged)}
+                )
+            else:
+                shutil.copyfile(src, staged)
+                written.append(
+                    {"path": dest_rel, "sha256": sha256_file(staged)}
+                )
+
+        for entry in written:
+            final = workspace / entry["path"]
+            final.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(staging / entry["path"]), str(final))
+
+        return written
+    except Exception as exc:
+        raise RuntimeError(
+            f"install_component({component_id}) failed: {exc}"
+        ) from exc
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)

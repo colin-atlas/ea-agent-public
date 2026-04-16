@@ -213,5 +213,72 @@ class StateTest(unittest.TestCase):
         self.assertTrue(content.endswith("\n"))
 
 
+class InstallComponentTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        self.kit_root = _make_fake_kit(self.tmp)
+        self.workspace = self.tmp / "ws"
+        self.workspace.mkdir()
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_install_identity_copies_and_substitutes(self):
+        result = kitlib.install_component(
+            "identity/bootstrap",
+            self.kit_root,
+            self.workspace,
+            {"NAME": "Kai"},
+        )
+        soul = self.workspace / "SOUL.md"
+        self.assertTrue(soul.exists())
+        self.assertEqual(soul.read_text(), "Hello Kai\n")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["path"], "SOUL.md")
+        self.assertEqual(len(result[0]["sha256"]), 64)
+
+    def test_install_missing_placeholder_raises_and_does_not_write(self):
+        with self.assertRaises(RuntimeError):
+            kitlib.install_component(
+                "skills/demo",
+                self.kit_root,
+                self.workspace,
+                {"NAME": "Kai"},  # missing GREETING
+            )
+        self.assertFalse((self.workspace / "skills/demo/SKILL.md").exists())
+
+    def test_install_db_component_runs_schema(self):
+        db_dir = self.kit_root / "db/demo"
+        db_dir.mkdir(parents=True)
+        (db_dir / "manifest.json").write_text(json.dumps({
+            "id": "db/demo",
+            "type": "db",
+            "version": "0.1.0",
+            "description": "test db",
+            "bundles": ["full"],
+            "requires": {"components": [], "placeholders": [], "env": []},
+            "files": [{"src": "schema.sql", "dest": "db/demo.db", "template": False}],
+        }))
+        (db_dir / "schema.sql").write_text(
+            "CREATE TABLE things (id INTEGER PRIMARY KEY, name TEXT);\n"
+        )
+        result = kitlib.install_component(
+            "db/demo", self.kit_root, self.workspace, {}
+        )
+        dbfile = self.workspace / "db/demo.db"
+        self.assertTrue(dbfile.exists())
+        import sqlite3
+        con = sqlite3.connect(dbfile)
+        rows = con.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'"
+        ).fetchall()
+        con.close()
+        self.assertIn(("things",), rows)
+        self.assertEqual(result[0]["path"], "db/demo.db")
+        self.assertEqual(result[0]["sha256"], "initialized")
+
+
 if __name__ == "__main__":
     unittest.main()
