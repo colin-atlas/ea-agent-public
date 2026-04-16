@@ -175,6 +175,45 @@ def install_component(
         shutil.rmtree(staging, ignore_errors=True)
 
 
+def remove_component_files(
+    workspace: Path,
+    file_entries: list[dict[str, str]],
+) -> tuple[list[str], list[str]]:
+    """
+    Remove files from workspace using checksum guard.
+
+    For each file entry ({"path": ..., "sha256": ...}):
+      - If the file doesn't exist, skip silently.
+      - If sha256 is "initialized" (DB sentinel), always remove.
+      - If the on-disk sha256 matches the recorded hash, remove.
+      - If the on-disk sha256 differs, skip and report as modified.
+
+    Returns (removed_paths, skipped_paths).
+    """
+    workspace = Path(workspace)
+    removed: list[str] = []
+    skipped: list[str] = []
+
+    for entry in file_entries:
+        fpath = workspace / entry["path"]
+        if not fpath.exists():
+            continue
+
+        recorded_hash = entry.get("sha256", "")
+        if recorded_hash == "initialized":
+            fpath.unlink()
+            removed.append(entry["path"])
+        else:
+            current_hash = sha256_file(fpath)
+            if current_hash == recorded_hash:
+                fpath.unlink()
+                removed.append(entry["path"])
+            else:
+                skipped.append(entry["path"])
+
+    return removed, skipped
+
+
 def check_dependents(
     component_id: str,
     installed: set[str],

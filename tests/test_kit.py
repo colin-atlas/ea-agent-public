@@ -379,6 +379,52 @@ class InstallCliTest(unittest.TestCase):
         self.assertIn("GREETING", result.stderr)
 
 
+class RemoveComponentFilesTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        self.kit_root = _make_fake_kit(self.tmp)
+        self.workspace = self.tmp / "ws"
+        self.workspace.mkdir()
+        # Install identity/bootstrap first
+        self.files = kitlib.install_component(
+            "identity/bootstrap", self.kit_root, self.workspace, {"NAME": "Kai"}
+        )
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_removes_unmodified_file(self):
+        removed, skipped = kitlib.remove_component_files(
+            self.workspace, self.files
+        )
+        self.assertEqual(len(removed), 1)
+        self.assertEqual(removed[0], "SOUL.md")
+        self.assertEqual(len(skipped), 0)
+        self.assertFalse((self.workspace / "SOUL.md").exists())
+
+    def test_skips_modified_file(self):
+        # Modify the file after install
+        (self.workspace / "SOUL.md").write_text("User edited this\n")
+        removed, skipped = kitlib.remove_component_files(
+            self.workspace, self.files
+        )
+        self.assertEqual(len(removed), 0)
+        self.assertEqual(len(skipped), 1)
+        self.assertEqual(skipped[0], "SOUL.md")
+        # File should still exist
+        self.assertTrue((self.workspace / "SOUL.md").exists())
+
+    def test_skips_already_deleted_file(self):
+        (self.workspace / "SOUL.md").unlink()
+        removed, skipped = kitlib.remove_component_files(
+            self.workspace, self.files
+        )
+        self.assertEqual(len(removed), 0)
+        self.assertEqual(len(skipped), 0)
+
+
 class CheckDependentsTest(unittest.TestCase):
     def setUp(self):
         import tempfile
