@@ -1,0 +1,22 @@
+{
+  "id": "dashboard/app",
+  "type": "dashboard",
+  "version": "0.2.0",
+  "description": "Executive dashboard: task board, brain vault browser, meeting debriefs, reports, KPIs.",
+  "bundles": ["full-ea", "dashboard-only"],
+  "requires": {
+    "components": ["identity/workspace", "db/tasks", "db/auth"],
+    "placeholders": ["AGENT_NAME", "EXECUTIVE_NAME", "COMPANY_NAME", "WORKSPACE_PATH", "DASHBOARD_PORT"],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "setup-template.sh",
+      "dest": "dashboard-setup.local.sh",
+      "template": true
+    }
+  ],
+  "post_install": {
+    "notes": "The dashboard source is NOT copied into your workspace. Run `bash dashboard-setup.local.sh` from the kit directory to install dependencies, build, seed auth, and create the systemd service. You will need Node.js 22+, sqlite3, and sudo access."
+  }
+}
