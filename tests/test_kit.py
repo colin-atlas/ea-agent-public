@@ -379,5 +379,36 @@ class InstallCliTest(unittest.TestCase):
         self.assertIn("GREETING", result.stderr)
 
 
+class AtomicSaveTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_save_state_no_tmp_file_left(self):
+        s = kitlib.empty_state()
+        s["answers"]["NAME"] = "Test"
+        kitlib.save_state(self.tmp, s)
+        # No .tmp file should remain after save
+        tmp_files = list(self.tmp.glob("*.tmp"))
+        self.assertEqual(tmp_files, [])
+        # The real file should exist and be valid
+        loaded = kitlib.load_state(self.tmp)
+        self.assertEqual(loaded["answers"]["NAME"], "Test")
+
+    def test_save_state_overwrites_existing(self):
+        s1 = kitlib.empty_state()
+        s1["answers"]["A"] = "1"
+        kitlib.save_state(self.tmp, s1)
+        s2 = kitlib.empty_state()
+        s2["answers"]["A"] = "2"
+        kitlib.save_state(self.tmp, s2)
+        loaded = kitlib.load_state(self.tmp)
+        self.assertEqual(loaded["answers"]["A"], "2")
+
+
 if __name__ == "__main__":
     unittest.main()

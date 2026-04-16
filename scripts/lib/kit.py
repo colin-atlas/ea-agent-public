@@ -115,7 +115,9 @@ def load_state(workspace: Path, filename: str = STATE_FILENAME) -> dict[str, Any
 def save_state(workspace: Path, state: dict[str, Any], filename: str = STATE_FILENAME) -> None:
     path = Path(workspace) / filename
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(state, indent=2, sort_keys=False) + "\n")
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state, indent=2, sort_keys=False) + "\n")
+    tmp.replace(path)
 
 
 def install_component(
