@@ -280,5 +280,76 @@ class InstallComponentTest(unittest.TestCase):
         self.assertEqual(result[0]["sha256"], "initialized")
 
 
+class InstallCliTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        self.kit_root = _make_fake_kit(self.tmp)
+        (self.kit_root / "VERSION").write_text("0.1.0\n")
+        self.workspace = self.tmp / "ws"
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_full_install_via_cli(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        answers = self.tmp / "answers.json"
+        answers.write_text(json.dumps({"NAME": "Kai", "GREETING": "Hello"}))
+
+        result = subprocess.run(
+            [
+                "python3",
+                str(repo_root / "scripts" / "install.py"),
+                "--kit-root", str(self.kit_root),
+                "--workspace", str(self.workspace),
+                "--answers", str(answers),
+                "--components", "skills/demo",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertTrue((self.workspace / "SOUL.md").exists())
+        self.assertEqual(
+            (self.workspace / "SOUL.md").read_text(), "Hello Kai\n"
+        )
+        self.assertTrue((self.workspace / "skills/demo/SKILL.md").exists())
+        self.assertEqual(
+            (self.workspace / "skills/demo/SKILL.md").read_text(),
+            "Hello, Kai!\n",
+        )
+        state = json.loads(
+            (self.workspace / "atlas-kit.local.json").read_text()
+        )
+        self.assertEqual(
+            set(state["components"].keys()),
+            {"identity/bootstrap", "skills/demo"},
+        )
+        self.assertEqual(state["answers"]["NAME"], "Kai")
+
+    def test_missing_placeholder_fails_fast(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        answers = self.tmp / "answers.json"
+        answers.write_text(json.dumps({"NAME": "Kai"}))
+
+        result = subprocess.run(
+            [
+                "python3",
+                str(repo_root / "scripts" / "install.py"),
+                "--kit-root", str(self.kit_root),
+                "--workspace", str(self.workspace),
+                "--answers", str(answers),
+                "--components", "skills/demo",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("GREETING", result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
