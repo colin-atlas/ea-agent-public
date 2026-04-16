@@ -1,0 +1,24 @@
+{
+  "bundles": {
+    "full-ea": {
+      "name": "Full EA",
+      "description": "Everything — identity, all skills, all databases, dashboard.",
+      "components": ["identity/bootstrap"]
+    },
+    "skills-only": {
+      "name": "Skills Only",
+      "description": "Identity and skills, no dashboard.",
+      "components": ["identity/bootstrap"]
+    },
+    "dashboard-only": {
+      "name": "Dashboard Only",
+      "description": "Just the executive dashboard (requires some databases).",
+      "components": ["identity/bootstrap"]
+    },
+    "minimal": {
+      "name": "Minimal",
+      "description": "Bootstrap identity only. Add skills later individually.",
+      "components": ["identity/bootstrap"]
+    }
+  }
+}

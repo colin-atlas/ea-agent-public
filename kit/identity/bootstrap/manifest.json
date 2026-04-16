@@ -1,0 +1,22 @@
+{
+  "id": "identity/bootstrap",
+  "type": "identity",
+  "version": "0.1.0",
+  "description": "Minimal identity templates (SOUL.md) to personalize an OpenClaw agent.",
+  "bundles": ["full-ea", "skills-only", "dashboard-only", "minimal"],
+  "requires": {
+    "components": [],
+    "placeholders": ["AGENT_NAME", "EXECUTIVE_NAME", "COMPANY", "TIMEZONE"],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SOUL-template.md",
+      "dest": "SOUL.md",
+      "template": true
+    }
+  ],
+  "post_install": {
+    "notes": "This is the minimal v0.1 identity. Fuller identity files (USER.md, MEMORY.md, etc.) land in a later kit version."
+  }
+}
