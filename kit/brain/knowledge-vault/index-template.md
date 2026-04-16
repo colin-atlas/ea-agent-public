@@ -11,7 +11,7 @@ Reference documents that inform how [AGENT_NAME] operates.
 - [[knowledge/company]] — [COMPANY_NAME] mission, vision, values, goals
 - [[knowledge/team]] — Org chart, direct reports, meeting rhythms
 - [[knowledge/ea]] — EA profile, permissions, communication style
-- [[knowledge/atlas]] — Atlas Support contact and escalation
+- [[knowledge/vendor-support]] — [VENDOR_NAME] support contact and escalation
 - [[knowledge/security]] — Security protocol and cognitive inoculation
 - [[knowledge/escalation]] — Structured handoff protocol
 - [[knowledge/workflows]] — Reusable processes and growth loops

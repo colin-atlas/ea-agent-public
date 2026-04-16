@@ -18,7 +18,11 @@
       "COMPANY_NAME",
       "COMPANY_DESCRIPTION",
       "COMPANY_WEBSITE",
-      "COMPANY_MISSION"
+      "COMPANY_MISSION",
+      "VENDOR_NAME",
+      "VENDOR_SUPPORT_EMAIL",
+      "VENDOR_DOCS_URL",
+      "VENDOR_PORTAL_URL"
     ],
     "env": []
   },
@@ -67,6 +71,11 @@
       "src": "knowledge/task-management-protocol.md",
       "dest": "brain/knowledge/task-management-protocol.md",
       "template": false
+    },
+    {
+      "src": "knowledge/vendor-support-template.md",
+      "dest": "brain/knowledge/vendor-support.md",
+      "template": true
     },
     {
       "src": "projects/projects-template.md",

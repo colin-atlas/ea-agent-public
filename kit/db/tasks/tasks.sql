@@ -99,7 +99,7 @@ BEGIN UPDATE tasks SET updated_at=datetime('now') WHERE id=NEW.id; END;
 CREATE TRIGGER IF NOT EXISTS tasks_activity_log AFTER UPDATE OF status ON tasks
 BEGIN
   INSERT INTO activity_log (entity_type, entity_id, action, details, actor)
-  VALUES ('task', NEW.id, 'status_changed', NEW.title || ': ' || OLD.status || ' -> ' || NEW.status, '[AGENT_NAME]');
+  VALUES ('task', NEW.id, 'status_changed', NEW.title || ': ' || OLD.status || ' -> ' || NEW.status, 'system');
 END;
 
 -- Triggers to keep FTS in sync
