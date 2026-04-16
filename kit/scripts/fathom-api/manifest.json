@@ -1,0 +1,24 @@
+{
+  "id": "scripts/fathom-api",
+  "type": "scripts",
+  "version": "0.2.0",
+  "description": "Fathom API helper: list meetings, get transcripts and summaries.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [],
+    "placeholders": [],
+    "env": [
+      "FATHOM_API_KEY"
+    ]
+  },
+  "files": [
+    {
+      "src": "fathom-api.sh",
+      "dest": "scripts/fathom-api.sh",
+      "template": false
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "skills/end-of-day-report",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Daily closeout: task progress review, tomorrow planning, decision logging.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "db/tasks",
+      "scripts/tasks-cli"
+    ],
+    "placeholders": [
+      "EXECUTIVE_FIRST_NAME",
+      "AGENT_NAME"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/end-of-day-report/SKILL.md",
+      "template": true
+    },
+    {
+      "src": "references/report-template.md",
+      "dest": "skills/end-of-day-report/references/report-template.md",
+      "template": true
+    }
+  ]
+}

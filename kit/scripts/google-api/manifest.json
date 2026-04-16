@@ -1,0 +1,24 @@
+{
+  "id": "scripts/google-api",
+  "type": "scripts",
+  "version": "0.2.0",
+  "description": "Google API helper: OAuth token refresh, Calendar read, Gmail label management.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [],
+    "placeholders": [],
+    "env": [
+      "GOOGLE_REFRESH_TOKEN"
+    ]
+  },
+  "files": [
+    {
+      "src": "google-api.sh",
+      "dest": "scripts/google-api.sh",
+      "template": false
+    }
+  ]
+}

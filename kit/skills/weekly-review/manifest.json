@@ -1,0 +1,35 @@
+{
+  "id": "skills/weekly-review",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Friday review: week retrospective, Big Three progress, next-week planning.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "db/tasks",
+      "brain/knowledge-vault",
+      "scripts/tasks-cli"
+    ],
+    "placeholders": [
+      "EXECUTIVE_FIRST_NAME",
+      "AGENT_NAME"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/weekly-review/SKILL.md",
+      "template": true
+    },
+    {
+      "src": "references/report-template.md",
+      "dest": "skills/weekly-review/references/report-template.md",
+      "template": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "cron/schedule",
+  "type": "cron",
+  "version": "0.2.0",
+  "description": "Central cron schedule for all skills: times, sessions, delivery targets, feature flags.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [],
+    "placeholders": [
+      "EXECUTIVE_CHANNEL_ID",
+      "EXECUTIVE_TIMEZONE"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "cron-manifest.json",
+      "dest": "cron-manifest.json",
+      "template": true
+    }
+  ]
+}

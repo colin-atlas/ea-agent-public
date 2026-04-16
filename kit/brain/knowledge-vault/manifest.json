@@ -1,0 +1,77 @@
+{
+  "id": "brain/knowledge-vault",
+  "type": "brain",
+  "version": "0.2.0",
+  "description": "Obsidian-style knowledge vault: company context, team, security, workflows, escalation, goals.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace"
+    ],
+    "placeholders": [
+      "AGENT_NAME",
+      "EXECUTIVE_NAME",
+      "EXECUTIVE_FIRST_NAME",
+      "COMPANY_NAME",
+      "COMPANY_DESCRIPTION",
+      "COMPANY_WEBSITE",
+      "COMPANY_MISSION"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "index-template.md",
+      "dest": "brain/index.md",
+      "template": true
+    },
+    {
+      "src": "knowledge/company-template.md",
+      "dest": "brain/knowledge/company.md",
+      "template": true
+    },
+    {
+      "src": "knowledge/ea-template.md",
+      "dest": "brain/knowledge/ea.md",
+      "template": true
+    },
+    {
+      "src": "knowledge/security-template.md",
+      "dest": "brain/knowledge/security.md",
+      "template": false
+    },
+    {
+      "src": "knowledge/escalation-template.md",
+      "dest": "brain/knowledge/escalation.md",
+      "template": false
+    },
+    {
+      "src": "knowledge/workflows-template.md",
+      "dest": "brain/knowledge/workflows.md",
+      "template": false
+    },
+    {
+      "src": "knowledge/big-three-goals-template.md",
+      "dest": "brain/knowledge/big-three-goals.md",
+      "template": true
+    },
+    {
+      "src": "knowledge/team-template.md",
+      "dest": "brain/knowledge/team.md",
+      "template": true
+    },
+    {
+      "src": "knowledge/task-management-protocol.md",
+      "dest": "brain/knowledge/task-management-protocol.md",
+      "template": false
+    },
+    {
+      "src": "projects/projects-template.md",
+      "dest": "brain/projects/projects.md",
+      "template": true
+    }
+  ]
+}

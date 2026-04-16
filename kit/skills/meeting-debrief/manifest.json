@@ -1,0 +1,36 @@
+{
+  "id": "skills/meeting-debrief",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Post-meeting processing: Fathom transcript to markdown debrief with action items.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "scripts/fathom-api",
+      "brain/knowledge-vault"
+    ],
+    "placeholders": [
+      "EXECUTIVE_FIRST_NAME",
+      "AGENT_NAME"
+    ],
+    "env": [
+      "FATHOM_API_KEY"
+    ]
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/meeting-debrief/SKILL.md",
+      "template": true
+    },
+    {
+      "src": "references/debrief-template.md",
+      "dest": "skills/meeting-debrief/references/debrief-template.md",
+      "template": true
+    }
+  ]
+}

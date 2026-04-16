@@ -1,0 +1,34 @@
+{
+  "id": "memory/scaffold",
+  "type": "memory",
+  "version": "0.2.0",
+  "description": "Working memory scaffold: decisions, patterns, corrections starter files.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace"
+    ],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "decisions.md",
+      "dest": "memory/decisions.md",
+      "template": false
+    },
+    {
+      "src": "patterns.md",
+      "dest": "memory/patterns.md",
+      "template": false
+    },
+    {
+      "src": "corrections.md",
+      "dest": "memory/corrections.md",
+      "template": false
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "skills/start-of-day-report",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Daily morning briefing: calendar review, task priorities, email highlights.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "db/tasks",
+      "scripts/google-api",
+      "scripts/tasks-cli"
+    ],
+    "placeholders": [
+      "EXECUTIVE_FIRST_NAME",
+      "AGENT_NAME"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/start-of-day-report/SKILL.md",
+      "template": true
+    },
+    {
+      "src": "references/briefing-template.md",
+      "dest": "skills/start-of-day-report/references/briefing-template.md",
+      "template": true
+    }
+  ]
+}

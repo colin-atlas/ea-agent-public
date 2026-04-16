@@ -1,0 +1,24 @@
+{
+  "id": "skills/atlas-health-check",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Daily infrastructure health: container status, cron jobs, database integrity.",
+  "bundles": [
+    "full-ea"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "db/tasks"
+    ],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/atlas-health-check/SKILL.md",
+      "template": true
+    }
+  ]
+}

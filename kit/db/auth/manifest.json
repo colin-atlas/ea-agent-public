@@ -1,0 +1,22 @@
+{
+  "id": "db/auth",
+  "type": "db",
+  "version": "0.2.0",
+  "description": "Dashboard authentication database: users and sessions.",
+  "bundles": [
+    "full-ea",
+    "dashboard-only"
+  ],
+  "requires": {
+    "components": [],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "auth.sql",
+      "dest": "db/auth.db",
+      "template": false
+    }
+  ]
+}

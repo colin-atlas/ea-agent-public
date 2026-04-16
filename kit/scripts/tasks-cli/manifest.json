@@ -1,0 +1,24 @@
+{
+  "id": "scripts/tasks-cli",
+  "type": "scripts",
+  "version": "0.2.0",
+  "description": "Task management CLI: list, add, update, filter, archive, search tasks.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "db/tasks"
+    ],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "tasks.sh",
+      "dest": "scripts/tasks.sh",
+      "template": false
+    }
+  ]
+}

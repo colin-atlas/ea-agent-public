@@ -1,0 +1,28 @@
+{
+  "id": "skills/meeting-prep",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Pre-meeting briefs: calendar scan, attendee lookup, context assembly.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "scripts/google-api"
+    ],
+    "placeholders": [
+      "EXECUTIVE_FIRST_NAME",
+      "AGENT_NAME"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/meeting-prep/SKILL.md",
+      "template": true
+    }
+  ]
+}

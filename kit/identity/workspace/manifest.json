@@ -1,0 +1,67 @@
+{
+  "id": "identity/workspace",
+  "type": "identity",
+  "version": "0.2.0",
+  "description": "Full workspace identity templates (SOUL, USER, AGENTS, MEMORY, HEARTBEAT, TOOLS, IDENTITY).",
+  "bundles": [
+    "full-ea",
+    "skills-only",
+    "minimal"
+  ],
+  "requires": {
+    "components": [],
+    "placeholders": [
+      "AGENT_NAME",
+      "AGENT_EMOJI",
+      "EXECUTIVE_NAME",
+      "EXECUTIVE_FIRST_NAME",
+      "EXECUTIVE_ROLE",
+      "EXECUTIVE_LOCATION",
+      "EXECUTIVE_TIMEZONE",
+      "COMPANY_NAME",
+      "COMPANY_DESCRIPTION",
+      "COMPANY_WEBSITE",
+      "COMPANY_MISSION",
+      "EXECUTIVE_CHANNEL_ID",
+      "PRIMARY_CHANNEL"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SOUL-template.md",
+      "dest": "SOUL.md",
+      "template": true
+    },
+    {
+      "src": "USER-template.md",
+      "dest": "USER.md",
+      "template": true
+    },
+    {
+      "src": "AGENTS-template.md",
+      "dest": "AGENTS.md",
+      "template": true
+    },
+    {
+      "src": "MEMORY-template.md",
+      "dest": "MEMORY.md",
+      "template": true
+    },
+    {
+      "src": "HEARTBEAT-template.md",
+      "dest": "HEARTBEAT.md",
+      "template": true
+    },
+    {
+      "src": "TOOLS-template.md",
+      "dest": "TOOLS.md",
+      "template": true
+    },
+    {
+      "src": "IDENTITY-template.md",
+      "dest": "IDENTITY.md",
+      "template": true
+    }
+  ]
+}

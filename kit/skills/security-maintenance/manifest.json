@@ -1,0 +1,23 @@
+{
+  "id": "skills/security-maintenance",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Daily security audit: system health checks, prompt injection defense, log review.",
+  "bundles": [
+    "full-ea"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace"
+    ],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/security-maintenance/SKILL.md",
+      "template": true
+    }
+  ]
+}

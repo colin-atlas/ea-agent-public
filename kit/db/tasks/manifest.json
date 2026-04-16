@@ -1,0 +1,25 @@
+{
+  "id": "db/tasks",
+  "type": "db",
+  "version": "0.2.0",
+  "description": "Task management database: projects, tasks, tags, activity log, sacred six, alerts.",
+  "bundles": [
+    "full-ea",
+    "skills-only",
+    "dashboard-only"
+  ],
+  "requires": {
+    "components": [],
+    "placeholders": [
+      "AGENT_NAME"
+    ],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "tasks.sql",
+      "dest": "db/tasks.db",
+      "template": false
+    }
+  ]
+}

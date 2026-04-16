@@ -1,0 +1,34 @@
+{
+  "id": "skills/inbox-triage",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Gmail scan: classify, label, and triage inbox messages.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "scripts/google-api"
+    ],
+    "placeholders": [
+      "EXECUTIVE_FIRST_NAME"
+    ],
+    "env": [
+      "GOOGLE_REFRESH_TOKEN"
+    ]
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/inbox-triage/SKILL.md",
+      "template": true
+    },
+    {
+      "src": "references/triage-rules.md",
+      "dest": "skills/inbox-triage/references/triage-rules.md",
+      "template": true
+    }
+  ]
+}

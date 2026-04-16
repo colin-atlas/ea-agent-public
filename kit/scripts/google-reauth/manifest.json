@@ -1,0 +1,25 @@
+{
+  "id": "scripts/google-reauth",
+  "type": "scripts",
+  "version": "0.2.0",
+  "description": "Google OAuth re-authentication: generate auth link, fetch and write tokens.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [],
+    "placeholders": [],
+    "env": [
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET"
+    ]
+  },
+  "files": [
+    {
+      "src": "google-reauth.sh",
+      "dest": "scripts/google-reauth.sh",
+      "template": false
+    }
+  ]
+}

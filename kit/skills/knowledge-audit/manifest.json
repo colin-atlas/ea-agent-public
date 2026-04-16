@@ -1,0 +1,26 @@
+{
+  "id": "skills/knowledge-audit",
+  "type": "skills",
+  "version": "0.2.0",
+  "description": "Weekly workspace and brain vault audit: stale files, broken references, coverage gaps.",
+  "bundles": [
+    "full-ea",
+    "skills-only"
+  ],
+  "requires": {
+    "components": [
+      "identity/workspace",
+      "brain/knowledge-vault",
+      "memory/scaffold"
+    ],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "SKILL.md",
+      "dest": "skills/knowledge-audit/SKILL.md",
+      "template": true
+    }
+  ]
+}

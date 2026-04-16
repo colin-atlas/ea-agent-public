@@ -2,23 +2,65 @@
   "bundles": {
     "full-ea": {
       "name": "Full EA",
-      "description": "Everything — identity, all skills, all databases, dashboard.",
-      "components": ["identity/bootstrap"]
+      "description": "Everything \u2014 identity, all skills, all databases, brain, memory, cron, dashboard.",
+      "components": [
+        "identity/workspace",
+        "brain/knowledge-vault",
+        "memory/scaffold",
+        "db/tasks",
+        "db/auth",
+        "scripts/google-api",
+        "scripts/fathom-api",
+        "scripts/tasks-cli",
+        "scripts/google-reauth",
+        "skills/start-of-day-report",
+        "skills/end-of-day-report",
+        "skills/weekly-review",
+        "skills/inbox-triage",
+        "skills/meeting-prep",
+        "skills/meeting-debrief",
+        "skills/knowledge-audit",
+        "skills/security-maintenance",
+        "skills/atlas-health-check",
+        "cron/schedule"
+      ]
     },
     "skills-only": {
       "name": "Skills Only",
-      "description": "Identity and skills, no dashboard.",
-      "components": ["identity/bootstrap"]
+      "description": "Identity, skills, brain, memory, cron \u2014 no dashboard.",
+      "components": [
+        "identity/workspace",
+        "brain/knowledge-vault",
+        "memory/scaffold",
+        "db/tasks",
+        "scripts/google-api",
+        "scripts/fathom-api",
+        "scripts/tasks-cli",
+        "scripts/google-reauth",
+        "skills/start-of-day-report",
+        "skills/end-of-day-report",
+        "skills/weekly-review",
+        "skills/inbox-triage",
+        "skills/meeting-prep",
+        "skills/meeting-debrief",
+        "skills/knowledge-audit",
+        "cron/schedule"
+      ]
     },
     "dashboard-only": {
       "name": "Dashboard Only",
-      "description": "Just the executive dashboard (requires some databases).",
-      "components": ["identity/bootstrap"]
+      "description": "Just the executive dashboard and required databases.",
+      "components": [
+        "db/tasks",
+        "db/auth"
+      ]
     },
     "minimal": {
       "name": "Minimal",
       "description": "Bootstrap identity only. Add skills later individually.",
-      "components": ["identity/bootstrap"]
+      "components": [
+        "identity/workspace"
+      ]
     }
   }
 }
