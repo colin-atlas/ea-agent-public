@@ -659,5 +659,76 @@ class AddCliTest(unittest.TestCase):
         self.assertIn("Nothing to add", result.stdout)
 
 
+class UpdateCliTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        self.kit_root = _make_fake_kit(self.tmp)
+        (self.kit_root / "VERSION").write_text("0.1.0\n")
+        self.workspace = self.tmp / "ws"
+        self.state_file = self.tmp / "state" / "atlas-kit.local.json"
+        # Install
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        answers = self.tmp / "answers.json"
+        answers.write_text(json.dumps({"NAME": "Kai", "GREETING": "Hi"}))
+        subprocess.run(
+            ["python3", str(repo_root / "scripts" / "install.py"),
+             "--kit-root", str(self.kit_root),
+             "--workspace", str(self.workspace),
+             "--answers", str(answers),
+             "--state-file", str(self.state_file),
+             "--components", "skills/demo"],
+            check=True, capture_output=True,
+        )
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_update_detects_version_change(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        # Bump the kit version for identity/bootstrap
+        manifest_path = self.kit_root / "identity/bootstrap/manifest.json"
+        m = json.loads(manifest_path.read_text())
+        m["version"] = "0.2.0"
+        manifest_path.write_text(json.dumps(m))
+        # Also update the template content
+        (self.kit_root / "identity/bootstrap/SOUL.md").write_text("Updated [NAME]\n")
+        (self.kit_root / "VERSION").write_text("0.2.0\n")
+
+        result = subprocess.run(
+            ["python3", str(repo_root / "scripts" / "update.py"),
+             "--kit-root", str(self.kit_root),
+             "--workspace", str(self.workspace),
+             "--state-file", str(self.state_file)],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertIn("Updated 1", result.stdout)
+        # File should have new content
+        self.assertEqual(
+            (self.workspace / "SOUL.md").read_text(), "Updated Kai\n"
+        )
+        # State should show new version
+        state = json.loads(self.state_file.read_text())
+        self.assertEqual(state["components"]["identity/bootstrap"]["version"], "0.2.0")
+        self.assertEqual(state["kit_version"], "0.2.0")
+
+    def test_no_update_when_current(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            ["python3", str(repo_root / "scripts" / "update.py"),
+             "--kit-root", str(self.kit_root),
+             "--workspace", str(self.workspace),
+             "--state-file", str(self.state_file)],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("up to date", result.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
