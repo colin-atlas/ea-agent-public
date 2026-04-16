@@ -92,5 +92,50 @@ class KitLoadingTest(unittest.TestCase):
         self.assertEqual(bundles["full"]["components"], ["identity/bootstrap"])
 
 
+class ResolveDepsTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        self.kit_root = _make_fake_kit(self.tmp)
+        self.kit = kitlib.load_kit(self.kit_root)
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_resolve_deps_pulls_in_transitive(self):
+        result = kitlib.resolve_deps(["skills/demo"], self.kit)
+        self.assertIn("identity/bootstrap", result)
+        self.assertIn("skills/demo", result)
+        self.assertLess(
+            result.index("identity/bootstrap"),
+            result.index("skills/demo"),
+        )
+
+    def test_resolve_deps_already_present_no_dup(self):
+        result = kitlib.resolve_deps(
+            ["identity/bootstrap", "skills/demo"], self.kit
+        )
+        self.assertEqual(result.count("identity/bootstrap"), 1)
+
+    def test_resolve_deps_unknown_component_raises(self):
+        with self.assertRaises(ValueError):
+            kitlib.resolve_deps(["skills/ghost"], self.kit)
+
+    def test_resolve_deps_cycle_raises(self):
+        cyclic_kit = {
+            "a/one": {"id": "a/one", "requires": {"components": ["a/two"]}},
+            "a/two": {"id": "a/two", "requires": {"components": ["a/one"]}},
+        }
+        with self.assertRaises(ValueError):
+            kitlib.resolve_deps(["a/one"], cyclic_kit)
+
+    def test_required_placeholders_union_sorted(self):
+        result = kitlib.required_placeholders(
+            ["identity/bootstrap", "skills/demo"], self.kit
+        )
+        self.assertEqual(result, ["GREETING", "NAME"])
+
+
 if __name__ == "__main__":
     unittest.main()

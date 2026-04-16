@@ -37,3 +37,38 @@ def load_bundles(kit_root: Path) -> dict[str, dict[str, Any]]:
     bundles_path = Path(kit_root) / "bundles.json"
     doc = json.loads(bundles_path.read_text())
     return doc.get("bundles", {})
+
+
+def resolve_deps(
+    requested: list[str], kit: dict[str, dict[str, Any]]
+) -> list[str]:
+    order: list[str] = []
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(cid: str) -> None:
+        if cid in visited:
+            return
+        if cid in visiting:
+            raise ValueError(f"dependency cycle involving {cid}")
+        if cid not in kit:
+            raise ValueError(f"unknown component {cid}")
+        visiting.add(cid)
+        for dep in kit[cid].get("requires", {}).get("components", []):
+            visit(dep)
+        visiting.remove(cid)
+        visited.add(cid)
+        order.append(cid)
+
+    for cid in requested:
+        visit(cid)
+    return order
+
+
+def required_placeholders(
+    components: list[str], kit: dict[str, dict[str, Any]]
+) -> list[str]:
+    tokens: set[str] = set()
+    for cid in components:
+        tokens.update(kit[cid].get("requires", {}).get("placeholders", []))
+    return sorted(tokens)
