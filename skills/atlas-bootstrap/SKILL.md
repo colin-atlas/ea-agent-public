@@ -18,11 +18,11 @@ You are helping your executive install the Atlas EA kit from a clone of `atlas-e
 
 ## Resume check
 
-If `$STATE_FILE` already exists and `components` is non-empty, the kit has already been installed at least partially. For this skill version (v0.2), refuse with:
+If `$STATE_FILE` already exists and `components` is non-empty, the kit has already been installed at least partially. This is not a fresh install — redirect the user:
 
-> "I see the kit is already installed in this workspace. Re-running install is not supported in v0.2 — add/remove/update will land in a later version of the kit."
+> "I see the kit is already installed in this workspace. To add a component, say 'add <component>'. To remove one, say 'remove <component>'. To update the kit, say 'update my atlas kit'."
 
-Only proceed if `components` is empty (fresh install) or the file does not exist.
+Only proceed with the full install interview if `components` is empty (fresh install) or the file does not exist.
 
 If `$STATE_FILE` exists with non-empty `answers` but empty `components`, the interview was interrupted earlier. Offer: "I have partial answers from a previous session. Resume from where we left off? [resume / start over]". On resume, skip questions whose answers are already present.
 
@@ -194,9 +194,87 @@ print(', '.join(sorted(envs)) or '(none)')
 - Any `post_install.notes` from the installed components (read each `$KIT_DIR/kit/<id>/manifest.json` and surface `.post_install.notes`)
 - Next step: "Restart your OpenClaw agent so it picks up the new identity and skills."
 
+## Adding a component
+
+When the user says something like "add the inbox-triage skill" or "I want to add meeting-debrief":
+
+1. Identify the component ID (e.g., `skills/inbox-triage`). If unsure, list available components:
+   ```bash
+   python3 -c "
+   import sys; sys.path.insert(0, '$KIT_DIR')
+   from scripts.lib import kit
+   k = kit.load_kit('$KIT_DIR/kit')
+   import json
+   st = json.load(open('$STATE_FILE'))
+   installed = set(st.get('components', {}).keys())
+   for cid, m in sorted(k.items()):
+       status = '(installed)' if cid in installed else ''
+       print(f'  {cid}: {m[\"description\"]} {status}')
+   "
+   ```
+
+2. Resolve deps and show the user what will be added:
+   ```bash
+   python3 "$KIT_DIR/scripts/resolve-deps.py" --kit-root "$KIT_DIR/kit" <component-id>
+   ```
+
+3. Check for new placeholder answers needed (compute required placeholders minus what's in state.answers). Ask the user for any missing values.
+
+4. Write answers to a temp file and run add.py:
+   ```bash
+   jq '.answers' "$STATE_FILE" > /tmp/atlas-answers-$$.json
+   python3 "$KIT_DIR/scripts/add.py" \
+     --kit-root "$KIT_DIR/kit" \
+     --workspace "$WORKSPACE" \
+     --answers /tmp/atlas-answers-$$.json \
+     --state-file "$STATE_FILE" \
+     --components "<component-id>"
+   rm -f /tmp/atlas-answers-$$.json
+   ```
+
+5. Report what was added. Mention any env vars the new component needs.
+
+## Removing a component
+
+When the user says "remove weekly-review" or "I don't need the knowledge-audit skill":
+
+1. Confirm the component is installed (check `$STATE_FILE`).
+
+2. Run remove.py:
+   ```bash
+   python3 "$KIT_DIR/scripts/remove.py" \
+     --kit-root "$KIT_DIR/kit" \
+     --workspace "$WORKSPACE" \
+     --state-file "$STATE_FILE" \
+     --components "<component-id>"
+   ```
+
+3. If remove.py fails with "depended on by", tell the user which components depend on it. Ask: "Remove those too? [yes/no]". On yes, re-run with `--force`.
+
+4. Report what was removed. If any files were skipped (modified since install), tell the user.
+
+## Updating the kit
+
+When the user says "update my atlas kit" or "check for updates":
+
+1. Tell the user to pull the latest kit first:
+   > "Please run `cd $KIT_DIR && git pull` in your terminal to get the latest kit version."
+
+2. After the user confirms they pulled, run update.py:
+   ```bash
+   jq '.answers' "$STATE_FILE" > /tmp/atlas-answers-$$.json
+   python3 "$KIT_DIR/scripts/update.py" \
+     --kit-root "$KIT_DIR/kit" \
+     --workspace "$WORKSPACE" \
+     --answers /tmp/atlas-answers-$$.json \
+     --state-file "$STATE_FILE"
+   rm -f /tmp/atlas-answers-$$.json
+   ```
+
+3. Report results. If any files were preserved (user-modified), tell the user so they can manually reconcile if needed.
+
 ## What this skill does NOT do
 
-- Add, remove, or update individual components post-install (planned for a later kit version).
 - Install the executive dashboard (planned for a later kit version).
 - Paste API keys or OAuth secrets — the user sets those in the agent environment themselves.
 - Write to `$KIT_DIR/kit/`. That is read-only as far as you are concerned.
