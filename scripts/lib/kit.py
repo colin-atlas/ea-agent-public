@@ -175,6 +175,20 @@ def install_component(
         shutil.rmtree(staging, ignore_errors=True)
 
 
+def components_needing_update(
+    state_components: dict[str, dict[str, Any]],
+    kit: dict[str, dict[str, Any]],
+) -> list[str]:
+    """Return component IDs whose kit version is newer than the installed version."""
+    needs_update: list[str] = []
+    for cid, info in state_components.items():
+        if cid not in kit:
+            continue
+        if kit[cid].get("version") != info.get("version"):
+            needs_update.append(cid)
+    return sorted(needs_update)
+
+
 def remove_component_files(
     workspace: Path,
     file_entries: list[dict[str, str]],

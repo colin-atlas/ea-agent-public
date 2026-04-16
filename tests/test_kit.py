@@ -379,6 +379,38 @@ class InstallCliTest(unittest.TestCase):
         self.assertIn("GREETING", result.stderr)
 
 
+class UpdateDetectionTest(unittest.TestCase):
+    def test_detects_version_change(self):
+        state_components = {
+            "identity/bootstrap": {"version": "0.1.0", "files": []},
+            "skills/demo": {"version": "0.1.0", "files": []},
+        }
+        kit = {
+            "identity/bootstrap": {"id": "identity/bootstrap", "version": "0.2.0"},
+            "skills/demo": {"id": "skills/demo", "version": "0.1.0"},
+        }
+        result = kitlib.components_needing_update(state_components, kit)
+        self.assertEqual(result, ["identity/bootstrap"])
+
+    def test_no_updates_when_versions_match(self):
+        state_components = {
+            "identity/bootstrap": {"version": "0.1.0", "files": []},
+        }
+        kit = {
+            "identity/bootstrap": {"id": "identity/bootstrap", "version": "0.1.0"},
+        }
+        result = kitlib.components_needing_update(state_components, kit)
+        self.assertEqual(result, [])
+
+    def test_ignores_components_not_in_kit(self):
+        state_components = {
+            "identity/removed": {"version": "0.1.0", "files": []},
+        }
+        kit = {}
+        result = kitlib.components_needing_update(state_components, kit)
+        self.assertEqual(result, [])
+
+
 class RemoveComponentFilesTest(unittest.TestCase):
     def setUp(self):
         import tempfile
