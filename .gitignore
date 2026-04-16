@@ -1,0 +1,20 @@
+# User's local state (written by atlas-bootstrap skill)
+atlas-kit.local.json
+dashboard-setup.local.sh
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Node (for the dashboard subtree in plan 4)
+node_modules/
+.next/
+dist/
+
+# Editor / OS
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/
