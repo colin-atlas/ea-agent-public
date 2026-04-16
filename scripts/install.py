@@ -19,6 +19,8 @@ def main() -> int:
     parser.add_argument("--answers", required=True, type=Path)
     parser.add_argument("--components", required=True,
                         help="Comma-separated component ids.")
+    parser.add_argument("--state-file", type=Path, default=None,
+                        help="Path to atlas-kit.local.json. Defaults to <workspace>/atlas-kit.local.json.")
     args = parser.parse_args()
 
     answers = json.loads(args.answers.read_text())
@@ -43,7 +45,14 @@ def main() -> int:
         return 1
 
     args.workspace.mkdir(parents=True, exist_ok=True)
-    state = kitlib.load_state(args.workspace)
+    if args.state_file is not None:
+        state_dir = args.state_file.parent
+        state_filename = args.state_file.name
+        state_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        state_dir = args.workspace
+        state_filename = "atlas-kit.local.json"
+    state = kitlib.load_state(state_dir, state_filename)
     now = datetime.now().astimezone().isoformat(timespec="seconds")
     kit_version = (args.kit_root / "VERSION").read_text().strip() \
         if (args.kit_root / "VERSION").exists() else None
@@ -69,7 +78,7 @@ def main() -> int:
         }
         file_count += len(files)
 
-    kitlib.save_state(args.workspace, state)
+    kitlib.save_state(state_dir, state, state_filename)
     print(f"Installed {len(closure)} component(s), wrote {file_count} file(s).")
     return 0
 

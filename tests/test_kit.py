@@ -329,6 +329,34 @@ class InstallCliTest(unittest.TestCase):
         )
         self.assertEqual(state["answers"]["NAME"], "Kai")
 
+    def test_custom_state_file_location(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        answers = self.tmp / "answers.json"
+        answers.write_text(json.dumps({"NAME": "Kai", "GREETING": "Hi"}))
+        state_path = self.tmp / "custom-state" / "atlas-kit.local.json"
+
+        result = subprocess.run(
+            [
+                "python3",
+                str(repo_root / "scripts" / "install.py"),
+                "--kit-root", str(self.kit_root),
+                "--workspace", str(self.workspace),
+                "--answers", str(answers),
+                "--components", "skills/demo",
+                "--state-file", str(state_path),
+            ],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        # State file lands at the custom path, not in workspace
+        self.assertTrue(state_path.exists())
+        self.assertFalse((self.workspace / "atlas-kit.local.json").exists())
+        state = json.loads(state_path.read_text())
+        self.assertIn("skills/demo", state["components"])
+        # Workspace still got the actual files
+        self.assertTrue((self.workspace / "skills/demo/SKILL.md").exists())
+
     def test_missing_placeholder_fails_fast(self):
         import subprocess
         repo_root = Path(__file__).resolve().parents[1]

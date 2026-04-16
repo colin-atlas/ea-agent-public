@@ -106,6 +106,7 @@ python3 "$KIT_DIR/scripts/install.py" \
   --kit-root "$KIT_DIR/kit" \
   --workspace "$WORKSPACE" \
   --answers /tmp/atlas-answers-$$.json \
+  --state-file "$STATE_FILE" \
   --components "$SELECTED"
 rm -f /tmp/atlas-answers-$$.json
 ```
