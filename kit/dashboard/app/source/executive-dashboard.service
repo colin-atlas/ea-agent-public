@@ -1,0 +1,20 @@
+# Reference systemd service template.
+# setup-dashboard.sh generates the actual service file at deploy time.
+# This file is NOT used directly — it documents the expected service structure.
+
+[Unit]
+Description=Executive Dashboard — [AGENT_NAME]
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/path/to/executive-dashboard
+ExecStart=/usr/bin/npx next start -p 18801 -H 127.0.0.1
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=WORKSPACE_PATH=/path/to/.openclaw/workspace
+
+[Install]
+WantedBy=multi-user.target
