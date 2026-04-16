@@ -14,7 +14,7 @@
     },
     "type": {
       "type": "string",
-      "enum": ["identity", "skill", "db", "script", "dashboard"]
+      "enum": ["identity", "skills", "db", "scripts", "dashboard"]
     },
     "version": {
       "type": "string",
