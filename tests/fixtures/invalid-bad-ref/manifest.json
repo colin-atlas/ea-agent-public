@@ -1,0 +1,18 @@
+{
+  "id": "identity/fixture",
+  "type": "identity",
+  "version": "0.1.0",
+  "description": "Fixture that depends on a nonexistent component.",
+  "bundles": ["test-bundle"],
+  "requires": {
+    "components": ["skills/does-not-exist"],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "dummy.md",
+      "dest": "dummy.md"
+    }
+  ]
+}

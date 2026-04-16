@@ -1,0 +1,17 @@
+{
+  "id": "identity/fixture",
+  "type": "identity",
+  "description": "Fixture missing required 'version' field.",
+  "bundles": ["test-bundle"],
+  "requires": {
+    "components": [],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "dummy.md",
+      "dest": "dummy.md"
+    }
+  ]
+}

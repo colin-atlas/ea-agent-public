@@ -1,0 +1,18 @@
+{
+  "id": "identity/fixture",
+  "type": "identity",
+  "version": "0.1.0",
+  "description": "Fixture referencing a bundle that is not in bundles.json.",
+  "bundles": ["ghost-bundle"],
+  "requires": {
+    "components": [],
+    "placeholders": [],
+    "env": []
+  },
+  "files": [
+    {
+      "src": "dummy.md",
+      "dest": "dummy.md"
+    }
+  ]
+}
