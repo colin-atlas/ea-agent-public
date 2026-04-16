@@ -18,22 +18,27 @@ You are helping your executive install the Atlas EA kit from a clone of `atlas-e
 
 ## Resume check
 
-If `$STATE_FILE` already exists and `components` is non-empty, the kit has already been installed at least partially. For this skill version (v0.1), refuse with:
+If `$STATE_FILE` already exists and `components` is non-empty, the kit has already been installed at least partially. For this skill version (v0.2), refuse with:
 
-> "I see the kit is already installed in this workspace. Re-running install is not supported in v0.1 — add/remove/update will land in a later version of the kit."
+> "I see the kit is already installed in this workspace. Re-running install is not supported in v0.2 — add/remove/update will land in a later version of the kit."
 
 Only proceed if `components` is empty (fresh install) or the file does not exist.
 
 If `$STATE_FILE` exists with non-empty `answers` but empty `components`, the interview was interrupted earlier. Offer: "I have partial answers from a previous session. Resume from where we left off? [resume / start over]". On resume, skip questions whose answers are already present.
 
-## Interview
+## Interview — Core questions (always asked)
 
-Ask the user, one question at a time in the channel, collecting answers into a running object you will write to `$STATE_FILE` under `answers` after each response. Use `jq` to update the file incrementally. The questions are:
+Ask the user, one question at a time in the channel, collecting answers into a running object you will write to `$STATE_FILE` under `answers` after each response. Use `jq` to update the file incrementally. The core questions are:
 
 1. **AGENT_NAME** — "What would you like me to call myself? (e.g. Kai, Atlas, Max)"
-2. **EXECUTIVE_NAME** — "What is your full name?"
-3. **COMPANY** — "What company are you with?"
-4. **TIMEZONE** — "What's your timezone? (IANA format, e.g. America/Denver)"
+2. **AGENT_EMOJI** — "Pick an emoji that represents me (e.g. 🤖, 🦊, ⚡)"
+3. **EXECUTIVE_NAME** — "What is your full name?"
+4. **EXECUTIVE_FIRST_NAME** — "What should I call you? (your first name)"
+5. **EXECUTIVE_ROLE** — "What is your role/title?"
+6. **COMPANY_NAME** — "What company are you with?"
+7. **EXECUTIVE_TIMEZONE** — "What's your timezone? (IANA format, e.g. America/Denver)"
+8. **EXECUTIVE_CHANNEL_ID** — "What is your Slack/Discord user ID? (I need this to recognize you)"
+9. **PRIMARY_CHANNEL** — "What is the channel ID where we'll primarily communicate?"
 
 After each answer, update `$STATE_FILE`:
 
@@ -46,25 +51,25 @@ If `$STATE_FILE` does not exist yet, create it first with `echo '{"kit_version":
 
 ## Pick a bundle
 
-Once the four core answers are collected, present the bundle menu:
+Once the nine core answers are collected, present the bundle menu:
 
 > "Which bundle would you like?
 >
-> 1. **Full EA** — everything (identity + all skills + all dbs + dashboard)
-> 2. **Skills Only** — identity and skills, no dashboard
-> 3. **Dashboard Only** — just the dashboard (requires some dbs)
+> 1. **Full EA** — everything (identity + all skills + databases + brain + memory + cron)
+> 2. **Skills Only** — identity, skills, brain, memory, cron — no dashboard
+> 3. **Dashboard Only** — just the dashboard and required databases
 > 4. **Minimal** — bootstrap identity only
 > 5. **Customize** — I'll walk you through each component
 >
 > Pick a number."
 
-For v0.1, **only "Minimal" is supported** — the other bundles will gain real components in plan 3. If the user picks anything else, say so and default to Minimal after confirming.
-
-Read the selected bundle's `components` array from `$KIT_DIR/kit/bundles.json`:
+All four bundles are supported. Read the selected bundle's `components` array from `$KIT_DIR/kit/bundles.json`:
 
 ```bash
 SELECTED=$(jq -r '.bundles.minimal.components | join(",")' "$KIT_DIR/kit/bundles.json")
 ```
+
+Replace `minimal` with `full-ea`, `skills-only`, or `dashboard-only` depending on the user's choice. For "Customize", walk through each component interactively.
 
 ## Resolve and preview
 
@@ -94,7 +99,28 @@ print('\n'.join(kit.required_placeholders(closure, k)))
 "
 ```
 
-For each placeholder in the output that is NOT already in `$STATE_FILE.answers`, ask the user for it and update the state file the same way as before.
+For each placeholder in the output that is NOT already in `$STATE_FILE.answers`, check if it has a defined question below and ask it. If the token has no predefined question, ask: "I need a value for [TOKEN_NAME]. What should it be?"
+
+**Optional questions (asked only if required by selected components):**
+
+- **EXECUTIVE_LOCATION** — "Where are you based? (city, state/country)"
+- **COMPANY_DESCRIPTION** — "Give me a one-sentence description of what your company does."
+- **COMPANY_WEBSITE** — "What's the company website?"
+- **COMPANY_MISSION** — "What's the company mission?"
+- **VENDOR_NAME** — "Who provides your agent support? (company or person name, or leave blank)"
+- **VENDOR_SUPPORT_EMAIL** — "Vendor support email? (or leave blank)"
+- **VENDOR_DOCS_URL** — "Vendor documentation URL? (or leave blank)"
+- **VENDOR_PORTAL_URL** — "Vendor portal URL? (or leave blank)"
+
+**Tokens that are NOT asked during bootstrap:**
+
+The following tokens appear in templates but are filled organically through conversations with your agent — not during initial setup. After a successful install, let the user know:
+
+> "I'll learn about your goals, projects, team, and preferences over our first few conversations — no need to provide all that now."
+
+Tokens in this category: `GOAL_*`, `PROJECT_*`, `CHALLENGE_*`, `VALUE_*`, `VISION_*`, `METRIC_*`, `REPORT_*`, `ADVISOR_*`, `TEAM_ORG_CHART`, `EA_*`, `GROUP_DM_CHANNEL_ID`, `EXECUTIVE_PERMISSION_TIER`, `EA_PERMISSION_TIER`, `DECISION_STYLE`, `PREFERENCE_*`, `SECURITY_PREFERENCE`, `UPDATE_PREFERENCE`, `OTHER_PREFERENCES`, `GMAIL_LABEL_*`, and similar runtime or onboarding-driven tokens.
+
+Update the state file the same way as before for each additional answer collected.
 
 ## Install
 
