@@ -515,5 +515,85 @@ class AtomicSaveTest(unittest.TestCase):
         self.assertEqual(loaded["answers"]["A"], "2")
 
 
+class RemoveCliTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+        self.kit_root = _make_fake_kit(self.tmp)
+        (self.kit_root / "VERSION").write_text("0.1.0\n")
+        self.workspace = self.tmp / "ws"
+        self.state_file = self.tmp / "state" / "atlas-kit.local.json"
+        # Install first
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        answers = self.tmp / "answers.json"
+        answers.write_text(json.dumps({"NAME": "Kai", "GREETING": "Hi"}))
+        subprocess.run(
+            ["python3", str(repo_root / "scripts" / "install.py"),
+             "--kit-root", str(self.kit_root),
+             "--workspace", str(self.workspace),
+             "--answers", str(answers),
+             "--state-file", str(self.state_file),
+             "--components", "skills/demo"],
+            check=True, capture_output=True,
+        )
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_remove_leaf_component(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            ["python3", str(repo_root / "scripts" / "remove.py"),
+             "--kit-root", str(self.kit_root),
+             "--workspace", str(self.workspace),
+             "--state-file", str(self.state_file),
+             "--components", "skills/demo"],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertIn("Removed 1", result.stdout)
+        # File should be gone
+        self.assertFalse((self.workspace / "skills/demo/SKILL.md").exists())
+        # State should not have it
+        state = json.loads(self.state_file.read_text())
+        self.assertNotIn("skills/demo", state["components"])
+        # identity/bootstrap should still be there
+        self.assertIn("identity/bootstrap", state["components"])
+
+    def test_remove_dependency_blocked(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            ["python3", str(repo_root / "scripts" / "remove.py"),
+             "--kit-root", str(self.kit_root),
+             "--workspace", str(self.workspace),
+             "--state-file", str(self.state_file),
+             "--components", "identity/bootstrap"],
+            capture_output=True, text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("depended on by", result.stderr)
+
+    def test_remove_dependency_force(self):
+        import subprocess
+        repo_root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            ["python3", str(repo_root / "scripts" / "remove.py"),
+             "--kit-root", str(self.kit_root),
+             "--workspace", str(self.workspace),
+             "--state-file", str(self.state_file),
+             "--components", "identity/bootstrap",
+             "--force"],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertIn("Removed 2", result.stdout)
+        state = json.loads(self.state_file.read_text())
+        self.assertEqual(state["components"], {})
+
+
 if __name__ == "__main__":
     unittest.main()
