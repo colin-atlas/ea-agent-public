@@ -27,3 +27,6 @@ jobs:
 
       - name: Run validator tests
         run: ./tests/test-validator.sh
+
+      - name: Run python tests
+        run: ./tests/run-python-tests.sh
