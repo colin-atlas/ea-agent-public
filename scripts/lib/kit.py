@@ -90,3 +90,29 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: f.read(65536), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+STATE_FILENAME = "atlas-kit.local.json"
+
+
+def empty_state() -> dict[str, Any]:
+    return {
+        "kit_version": None,
+        "installed_at": None,
+        "last_updated_at": None,
+        "answers": {},
+        "components": {},
+    }
+
+
+def load_state(workspace: Path) -> dict[str, Any]:
+    path = Path(workspace) / STATE_FILENAME
+    if not path.exists():
+        return empty_state()
+    return json.loads(path.read_text())
+
+
+def save_state(workspace: Path, state: dict[str, Any]) -> None:
+    path = Path(workspace) / STATE_FILENAME
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state, indent=2, sort_keys=False) + "\n")

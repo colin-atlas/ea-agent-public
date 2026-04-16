@@ -179,5 +179,39 @@ class Sha256Test(unittest.TestCase):
             shutil.rmtree(tmp, ignore_errors=True)
 
 
+class StateTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_empty_state_shape(self):
+        s = kitlib.empty_state()
+        self.assertEqual(s["answers"], {})
+        self.assertEqual(s["components"], {})
+        self.assertIsNone(s["installed_at"])
+
+    def test_load_state_missing_returns_empty(self):
+        s = kitlib.load_state(self.tmp)
+        self.assertEqual(s, kitlib.empty_state())
+
+    def test_save_then_load_roundtrip(self):
+        s = kitlib.empty_state()
+        s["answers"]["NAME"] = "Kai"
+        kitlib.save_state(self.tmp, s)
+        self.assertTrue((self.tmp / "atlas-kit.local.json").exists())
+        loaded = kitlib.load_state(self.tmp)
+        self.assertEqual(loaded["answers"]["NAME"], "Kai")
+
+    def test_save_state_has_trailing_newline(self):
+        s = kitlib.empty_state()
+        kitlib.save_state(self.tmp, s)
+        content = (self.tmp / "atlas-kit.local.json").read_text()
+        self.assertTrue(content.endswith("\n"))
+
+
 if __name__ == "__main__":
     unittest.main()
